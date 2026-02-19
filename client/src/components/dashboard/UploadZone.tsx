@@ -65,12 +65,8 @@ export const UploadZone: React.FC = () => {
         headers: { "Content-Type": "multipart/form-data" },
       });
       toast.success(response.data.message || "File uploaded successfully");
-      //navigate user to BuyersTable
-      setIsSuccess(true)
       router("/dashboard/buyers")
-
       setFile(null);
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       toast.error(error.response?.data?.message || "Failed to upload file");
     } finally {
