@@ -44,25 +44,25 @@ This application was built as a technical assignment demonstrating proficiency i
 
 ### Authentication & Authorization
 
-| Feature | Implementation |
-|---------|----------------|
-| Registration | Email/Mobile uniqueness validation, secure password hashing (bcrypt, 12 rounds) |
-| Login | Flexible login via Email or Mobile |
-| Password Policy | 8+ characters, uppercase, lowercase, and number required |
-| JWT Sessions | Access token (10 min) + Refresh token (7 days) |
-| Auto Refresh | Seamless token refresh with request queuing |
-| Protected Routes | Middleware-based route protection |
+| Feature          | Implementation                                                                  |
+| ---------------- | ------------------------------------------------------------------------------- |
+| Registration     | Email/Mobile uniqueness validation, secure password hashing (bcrypt, 12 rounds) |
+| Login            | Flexible login via Email or Mobile                                              |
+| Password Policy  | 8+ characters, uppercase, lowercase, and number required                        |
+| JWT Sessions     | Access token (10 min) + Refresh token (7 days)                                  |
+| Auto Refresh     | Seamless token refresh with request queuing                                     |
+| Protected Routes | Middleware-based route protection                                               |
 
 ### Data Management
 
-| Feature | Description |
-|---------|-------------|
-| File Upload | CSV, XLS, XLSX support (max 5MB) |
-| Smart Mapping | Auto-normalizes column headers (e.g., "Total Invoice" → `total_invoice`) |
-| Upload History | Track all uploads with metadata and summary statistics |
-| Pagination | Server-side pagination with configurable page size |
-| Search | Real-time search by Name, Email, or Mobile |
-| Filters | Filter by payment status (Has Due/No Due) and invoice range |
+| Feature        | Description                                                              |
+| -------------- | ------------------------------------------------------------------------ |
+| File Upload    | CSV, XLS, XLSX support (max 5MB)                                         |
+| Smart Mapping  | Auto-normalizes column headers (e.g., "Total Invoice" → `total_invoice`) |
+| Upload History | Track all uploads with metadata and summary statistics                   |
+| Pagination     | Server-side pagination with configurable page size                       |
+| Search         | Real-time search by Name, Email, or Mobile                               |
+| Filters        | Filter by payment status (Has Due/No Due) and invoice range              |
 
 ### Security Features
 
@@ -118,33 +118,33 @@ This application was built as a technical assignment demonstrating proficiency i
 
 ### Frontend
 
-| Technology | Purpose |
-|------------|---------|
-| React 19 | UI Framework |
-| TypeScript | Type Safety |
-| Vite | Build Tool |
-| Tailwind CSS 4 | Styling (Oxide Engine) |
-| TanStack Query | Server State Management |
-| React Hook Form | Form Handling |
-| Zod | Schema Validation |
-| Framer Motion | Animations |
-| Axios | HTTP Client |
+| Technology      | Purpose                 |
+| --------------- | ----------------------- |
+| React 19        | UI Framework            |
+| TypeScript      | Type Safety             |
+| Vite            | Build Tool              |
+| Tailwind CSS 4  | Styling (Oxide Engine)  |
+| TanStack Query  | Server State Management |
+| React Hook Form | Form Handling           |
+| Zod             | Schema Validation       |
+| Framer Motion   | Animations              |
+| Axios           | HTTP Client             |
 
 ### Backend
 
-| Technology | Purpose |
-|------------|---------|
-| Node.js | Runtime Environment |
-| Express.js | Web Framework |
-| TypeScript | Type Safety |
-| MySQL2 | Database Driver |
-| bcrypt | Password Hashing |
-| jsonwebtoken | JWT Implementation |
-| Helmet | Security Headers |
-| express-rate-limit | Rate Limiting |
-| csv-parser | CSV Processing |
-| ExcelJS | Excel Processing |
-| Multer | File Uploads |
+| Technology         | Purpose             |
+| ------------------ | ------------------- |
+| Node.js            | Runtime Environment |
+| Express.js         | Web Framework       |
+| TypeScript         | Type Safety         |
+| MySQL2             | Database Driver     |
+| bcrypt             | Password Hashing    |
+| jsonwebtoken       | JWT Implementation  |
+| Helmet             | Security Headers    |
+| express-rate-limit | Rate Limiting       |
+| csv-parser         | CSV Processing      |
+| ExcelJS            | Excel Processing    |
+| Multer             | File Uploads        |
 
 ---
 
@@ -393,36 +393,36 @@ npm run dev
 
 ### Authentication Endpoints
 
-| Method | Endpoint | Description | Rate Limit |
-|--------|----------|-------------|------------|
-| POST | `/api/v1/auth/register` | Register new user | 5/15min |
-| POST | `/api/v1/auth/login` | Login with email/mobile | 5/15min |
-| POST | `/api/v1/auth/refresh` | Refresh access token | 50/15min |
-| POST | `/api/v1/auth/logout` | Logout user | None |
+| Method | Endpoint                | Description             | Rate Limit |
+| ------ | ----------------------- | ----------------------- | ---------- |
+| POST   | `/api/v1/auth/register` | Register new user       | 5/15min    |
+| POST   | `/api/v1/auth/login`    | Login with email/mobile | 5/15min    |
+| POST   | `/api/v1/auth/refresh`  | Refresh access token    | 50/15min   |
+| POST   | `/api/v1/auth/logout`   | Logout user             | None       |
 
 ### Buyer Endpoints
 
-| Method | Endpoint | Description | Auth |
-|--------|----------|-------------|------|
-| POST | `/api/v1/buyers/upload` | Upload CSV/Excel file | Required |
-| GET | `/api/v1/buyers` | Get paginated buyers | Required |
-| GET | `/api/v1/buyers/uploads` | Get upload history | Required |
-| GET | `/api/v1/buyers/uploads/:id` | Get upload details | Required |
-| DELETE | `/api/v1/buyers/uploads/:id` | Delete upload | Required |
+| Method | Endpoint                     | Description           | Auth     |
+| ------ | ---------------------------- | --------------------- | -------- |
+| POST   | `/api/v1/buyers/upload`      | Upload CSV/Excel file | Required |
+| GET    | `/api/v1/buyers`             | Get paginated buyers  | Required |
+| GET    | `/api/v1/buyers/uploads`     | Get upload history    | Required |
+| GET    | `/api/v1/buyers/uploads/:id` | Get upload details    | Required |
+| DELETE | `/api/v1/buyers/uploads/:id` | Delete upload         | Required |
 
 ### Query Parameters
 
 **GET /api/v1/buyers**
 
-| Parameter | Type | Description |
-|-----------|------|-------------|
-| page | number | Page number (default: 1) |
-| limit | number | Items per page (default: 10, max: 100) |
-| search | string | Search by name, email, or mobile |
-| uploadId | number | Filter by upload ID |
-| dueStatus | string | `all`, `has_due`, `no_due` |
-| minInvoice | number | Minimum invoice amount |
-| maxInvoice | number | Maximum invoice amount |
+| Parameter  | Type   | Description                            |
+| ---------- | ------ | -------------------------------------- |
+| page       | number | Page number (default: 1)               |
+| limit      | number | Items per page (default: 10, max: 100) |
+| search     | string | Search by name, email, or mobile       |
+| uploadId   | number | Filter by upload ID                    |
+| dueStatus  | string | `all`, `has_due`, `no_due`             |
+| minInvoice | number | Minimum invoice amount                 |
+| maxInvoice | number | Maximum invoice amount                 |
 
 ### Example Requests
 
@@ -513,30 +513,30 @@ recordent-assignment/
 
 ## Bonus Features Implemented
 
-| Feature | Status | Description |
-|---------|--------|-------------|
-| Refresh Token | ✅ | Dual-token system with automatic refresh |
-| Clean Architecture (MVC) | ✅ | Controllers, routes, models, middleware separation |
-| Proper Error Handling | ✅ | Centralized error handling, no info leakage |
-| Security Best Practices | ✅ | Helmet, rate limiting, input sanitization |
-| Upload History | ✅ | Track and manage uploaded files |
-| Advanced Filters | ✅ | Payment status and invoice range filters |
-| Real-time Validation | ✅ | Password requirements with visual feedback |
+| Feature                  | Status | Description                                        |
+| ------------------------ | ------ | -------------------------------------------------- |
+| Refresh Token            | ✅     | Dual-token system with automatic refresh           |
+| Clean Architecture (MVC) | ✅     | Controllers, routes, models, middleware separation |
+| Proper Error Handling    | ✅     | Centralized error handling, no info leakage        |
+| Security Best Practices  | ✅     | Helmet, rate limiting, input sanitization          |
+| Upload History           | ✅     | Track and manage uploaded files                    |
+| Advanced Filters         | ✅     | Payment status and invoice range filters           |
+| Real-time Validation     | ✅     | Password requirements with visual feedback         |
 
 ---
 
 ## Evaluation Criteria Coverage
 
-| Criteria | Implementation |
-|----------|----------------|
-| Code Structure & Cleanliness | MVC architecture, TypeScript, clear separation |
+| Criteria                       | Implementation                                        |
+| ------------------------------ | ----------------------------------------------------- |
+| Code Structure & Cleanliness   | MVC architecture, TypeScript, clear separation        |
 | JWT Implementation Correctness | Access + Refresh tokens, auto-refresh, secure storage |
-| Security Practices | Helmet, rate limiting, bcrypt, input sanitization |
-| Database Design | Normalized tables, proper FKs, indexes |
-| Validation Implementation | Zod on client & server, detailed error messages |
-| Pagination & Search | Server-side with configurable limits |
-| UI Responsiveness | Mobile-first Tailwind design |
-| Documentation Quality | Comprehensive README with diagrams |
+| Security Practices             | Helmet, rate limiting, bcrypt, input sanitization     |
+| Database Design                | Normalized tables, proper FKs, indexes                |
+| Validation Implementation      | Zod on client & server, detailed error messages       |
+| Pagination & Search            | Server-side with configurable limits                  |
+| UI Responsiveness              | Mobile-first Tailwind design                          |
+| Documentation Quality          | Comprehensive README with diagrams                    |
 
 ---
 
@@ -555,33 +555,12 @@ Both files include various payment statuses for testing filters.
 
 This application is configured for deployment on free tier hosting platforms:
 
-### Backend (Render)
-
-1. Create a new Web Service on [Render](https://render.com)
-2. Connect your GitHub repository
-3. Configure the service:
-   - **Root Directory**: `server`
-   - **Build Command**: `npm install && npm run build`
-   - **Start Command**: `npm start`
-4. Set environment variables in Render dashboard (see `.env.example`)
-5. Deploy!
-
 **Note**: Free tier services spin down after 15 minutes of inactivity. First requests may take 30-60 seconds.
-
-### Frontend (Vercel)
-
-1. Create a new project on [Vercel](https://vercel.com)
-2. Connect your GitHub repository
-3. Configure the project:
-   - **Root Directory**: `client`
-   - **Framework Preset**: Vite
-4. Set environment variable:
-   - `VITE_API_BASE_URL`: Your Render backend URL + `/api/v1`
-5. Deploy!
 
 ### Environment Variables for Production
 
 **Backend (Render)**:
+
 ```env
 NODE_ENV=production
 DB_HOST=your-tidb-host
@@ -596,21 +575,10 @@ CLIENT_URL=https://your-frontend.vercel.app
 ```
 
 **Frontend (Vercel)**:
+
 ```env
 VITE_API_BASE_URL=https://your-backend.onrender.com/api/v1
 ```
-
----
-
-## Demo
-
-A live demo is available with the following considerations:
-
-- **Frontend**: Hosted on Vercel (always available)
-- **Backend**: Hosted on Render free tier (may take 30-60 seconds to wake up)
-- **Database**: TiDB Cloud (serverless MySQL)
-
-The application includes a visual indicator showing when the backend is waking up from sleep mode.
 
 ---
 
