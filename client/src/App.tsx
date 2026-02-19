@@ -6,7 +6,7 @@ import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Home } from './pages/Home';
-// import Dashboard from './pages/Dashboard';
+import { DashboardHome, BuyersPage, ImportPage } from './pages/Dashboard';
 
 const queryClient = new QueryClient();
 
@@ -25,11 +25,29 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
+
+      {/* Dashboard Routes */}
       <Route
         path="/dashboard"
         element={
           <ProtectedRoute>
-            <div className="text-gray-900 p-10">Dashboard (Protected)</div>
+            <DashboardHome />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/buyers"
+        element={
+          <ProtectedRoute>
+            <BuyersPage />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/dashboard/import"
+        element={
+          <ProtectedRoute>
+            <ImportPage />
           </ProtectedRoute>
         }
       />

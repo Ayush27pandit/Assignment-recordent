@@ -61,19 +61,34 @@ export const uploadBuyers = async (req: AuthRequest, res: Response) => {
         try {
             await connection.beginTransaction();
 
-            for (const buyer of buyers) {
-                // Simple data cleaning/validation
+            for (const item of buyers) {
+                // Normalize keys to lowercase and replace spaces/underscores for flexible mapping
+                const buyer: any = {};
+                Object.keys(item).forEach(key => {
+                    const normalizedKey = key.toLowerCase().trim().replace(/[\s_]+/g, '');
+                    buyer[normalizedKey] = item[key];
+                });
+
+                // Mapping based on normalized keys
+                const name = buyer.name || '';
+                const email = buyer.email || '';
+                const mobile = buyer.mobile || '';
+                const address = buyer.address || '';
+                const totalInvoice = parseFloat(buyer.totalinvoice || buyer.invoice || 0);
+                const amountPaid = parseFloat(buyer.amountpaid || buyer.paid || 0);
+                const amountDue = parseFloat(buyer.amountdue || buyer.due || 0);
+
                 await connection.execute(
                     'INSERT INTO buyers (user_id, name, email, mobile, address, total_invoice, amount_paid, amount_due) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
                     [
                         userId,
-                        buyer.name,
-                        buyer.email,
-                        buyer.mobile,
-                        buyer.address || '',
-                        buyer.total_invoice || 0,
-                        buyer.amount_paid || 0,
-                        buyer.amount_due || 0
+                        name,
+                        email,
+                        mobile,
+                        address,
+                        totalInvoice,
+                        amountPaid,
+                        amountDue
                     ]
                 );
             }
@@ -113,8 +128,7 @@ export const getBuyers = async (req: AuthRequest, res: Response) => {
             params.push(searchParam, searchParam, searchParam);
         }
 
-        query += ' ORDER BY created_at DESC LIMIT ? OFFSET ?';
-        params.push(limit, offset);
+        query += ` ORDER BY created_at DESC LIMIT ${limit} OFFSET ${offset}`;
 
         const [rows]: any = await pool.execute(query, params);
 
@@ -141,6 +155,7 @@ export const getBuyers = async (req: AuthRequest, res: Response) => {
             }
         });
     } catch (error: any) {
+        console.error('Error in getBuyers:', error);
         res.status(500).json({ message: error.message });
     }
 };

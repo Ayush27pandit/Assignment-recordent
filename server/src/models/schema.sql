@@ -21,8 +21,7 @@ CREATE TABLE IF NOT EXISTS buyers (
     amount_paid DECIMAL(15, 2) NOT NULL,
     amount_due DECIMAL(15, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-    FULLTEXT INDEX (name, email, mobile)
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS refresh_tokens (

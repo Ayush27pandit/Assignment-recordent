@@ -1,0 +1,11 @@
+Name,Email,Mobile,Address,Total Invoice,Paid,Due
+John Doe,john@example.com,9876543210,123 Main St New York NY,5000,3000,2000
+Jane Smith,jane@test.com,9123456789,456 Park Ave Los Angeles CA,3500,3500,0
+Robert Brown,robert@company.com,9988776655,789 Broad Way Chicago IL,12000,5000,7000
+Alice Wilson,alice@web.com,9445566778,101 Sunset Blvd Miami FL,2500,1000,1500
+Michael Scott,michael@dundermifflin.com,9001122334,1725 Slough Ave Scranton PA,800,800,0
+Sarah Connor,sarah@future.com,9554433221,202 Terminator Way Los Angeles CA,15000,0,15000
+David Miller,david@service.com,9112233445,303 Mountain View Denver CO,4500,4500,0
+Emily Davis,emily@agency.com,9667788990,404 Forest Rd Seattle WA,6700,4200,2500
+Kevin Malone,kevin@chili.com,9122334455,102 Dunder St Scranton PA,300,150,150
+Dwight Schrute,dwight@beets.com,9887766554,Schrute Farms Scranton PA,9000,9000,0
