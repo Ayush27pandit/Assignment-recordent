@@ -1,13 +1,17 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { ArrowRight, BarChart3, ShieldCheck, Zap, Mail, Phone, MapPin } from 'lucide-react';
+import { ArrowRight, BarChart3, ShieldCheck, Zap, AlertTriangle, Clock } from 'lucide-react';
 import { Button } from '../components/ui/Button';
+import { BackendStatusIndicator, BackendWakeUpBanner, useBackendStatus } from '../components/ui/BackendStatus';
 
 export const Home: React.FC = () => {
+    const { isAwake, isChecking } = useBackendStatus();
+
     return (
         <div className="min-h-screen bg-neutral-950 text-white selection:bg-purple-500/30">
-            {/* Navigation */}
+            <BackendWakeUpBanner />
+
             <nav className="fixed top-0 w-full z-50 border-b border-white/5 bg-neutral-950/50 backdrop-blur-xl">
                 <div className="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
                     <div className="flex items-center space-x-2">
@@ -24,6 +28,9 @@ export const Home: React.FC = () => {
                     </div>
 
                     <div className="flex items-center space-x-4">
+                        <div className="hidden md:block">
+                            <BackendStatusIndicator />
+                        </div>
                         <Link to="/login">
                             <Button variant="ghost" size="sm">Sign In</Button>
                         </Link>
@@ -34,9 +41,7 @@ export const Home: React.FC = () => {
                 </div>
             </nav>
 
-            {/* Hero Section */}
             <section className="relative pt-32 pb-20 md:pt-48 md:pb-32 overflow-hidden">
-                {/* Animated Background Glow */}
                 <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-primary/20 rounded-full blur-[160px] opacity-50 pointer-events-none" />
 
                 <div className="max-w-7xl mx-auto px-6 relative z-10">
@@ -65,18 +70,40 @@ export const Home: React.FC = () => {
                                         <ArrowRight className="ml-2" size={20} />
                                     </Button>
                                 </Link>
-                                <Link to="/login">
-                                    <Button variant="outline" size="lg" className="px-10">
-                                        View Demo
-                                    </Button>
-                                </Link>
                             </div>
                         </motion.div>
                     </div>
                 </div>
             </section>
 
-            {/* Features Section */}
+            {/* Demo Notice Section */}
+            {!isAwake && !isChecking && (
+                <section className="py-8 border-y border-yellow-500/20 bg-yellow-500/5">
+                    <div className="max-w-7xl mx-auto px-6">
+                        <div className="flex items-center justify-center space-x-3 text-yellow-500">
+                            <AlertTriangle size={20} />
+                            <p className="text-sm">
+                                <strong>Demo Notice:</strong> The backend is hosted on Render's free tier and may take 30-60 seconds to wake up from sleep.
+                                Please wait while it starts up.
+                            </p>
+                        </div>
+                    </div>
+                </section>
+            )}
+
+            {/* Info Banner */}
+            <section className="py-6 border-y border-white/5 bg-neutral-900/40">
+                <div className="max-w-7xl mx-auto px-6">
+                    <div className="flex items-center justify-center space-x-3 text-neutral-400">
+                        <Clock size={18} />
+                        <p className="text-sm">
+                            <strong className="text-white">Note:</strong> This demo uses free tier hosting. 
+                            The backend (Render) spins down after 15 minutes of inactivity and takes ~30-60 seconds to wake up.
+                        </p>
+                    </div>
+                </div>
+            </section>
+
             <section id="features" className="py-24 border-y border-white/5 bg-neutral-900/20">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
@@ -118,7 +145,6 @@ export const Home: React.FC = () => {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer className="py-12 border-t border-white/5">
                 <div className="max-w-7xl mx-auto px-6">
                     <div className="flex flex-col md:flex-row justify-between items-center">
@@ -130,7 +156,7 @@ export const Home: React.FC = () => {
                         </div>
 
                         <div className="text-sm text-neutral-500">
-                            © 2024 Recordent Assignment. Built with passion for excellence.
+                            © 2026 Recordent Assignment. Built with passion for excellence.
                         </div>
 
                         <div className="flex space-x-6 mt-6 md:mt-0 text-neutral-400">

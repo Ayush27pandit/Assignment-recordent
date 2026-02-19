@@ -13,13 +13,14 @@ import toast from 'react-hot-toast';
 
 const loginSchema = z.object({
     identifier: z.string().min(1, 'Email or Mobile is required'),
-    password: z.string().min(6, 'Password must be at least 6 characters'),
+    password: z.string().min(1, 'Password is required'),
 });
 
 type LoginFormValues = z.infer<typeof loginSchema>;
 
 export const Login: React.FC = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [serverErrors, setServerErrors] = useState<Record<string, string>>({});
     const { login: authLogin } = useAuth();
     const navigate = useNavigate();
 
@@ -29,17 +30,41 @@ export const Login: React.FC = () => {
 
     const onSubmit = async (data: LoginFormValues) => {
         setIsLoading(true);
+        setServerErrors({});
         try {
             const response = await api.post('/auth/login', data);
             const { accessToken, user } = response.data;
             authLogin(accessToken, user);
             toast.success('Welcome back!');
             navigate('/dashboard');
-        } catch (error: any) {
-            toast.error(error.response?.data?.message || 'Login failed. Please check your credentials.');
+        } catch (error: unknown) {
+            const axiosError = error as { response?: { data?: { message?: string; errors?: Array<{ path: string[]; message: string }> } } };
+            const responseData = axiosError.response?.data;
+            
+            if (responseData?.errors && Array.isArray(responseData.errors)) {
+                const fieldErrors: Record<string, string> = {};
+                responseData.errors.forEach((err) => {
+                    const field = err.path[0];
+                    if (field) {
+                        fieldErrors[field] = err.message;
+                    }
+                });
+                setServerErrors(fieldErrors);
+                
+                const firstError = Object.values(fieldErrors)[0];
+                if (firstError) {
+                    toast.error(firstError);
+                }
+            } else {
+                toast.error(responseData?.message || 'Login failed. Please check your credentials.');
+            }
         } finally {
             setIsLoading(false);
         }
+    };
+
+    const getFieldError = (field: string): string | undefined => {
+        return serverErrors[field] || errors[field as keyof typeof errors]?.message;
     };
 
     return (
@@ -52,7 +77,7 @@ export const Login: React.FC = () => {
                     label="Email or Mobile"
                     placeholder="Enter your email or mobile"
                     icon={<Mail size={18} />}
-                    error={errors.identifier?.message}
+                    error={getFieldError('identifier')}
                     {...register('identifier')}
                 />
                 <Input
@@ -60,7 +85,7 @@ export const Login: React.FC = () => {
                     type="password"
                     placeholder="••••••••"
                     icon={<Lock size={18} />}
-                    error={errors.password?.message}
+                    error={getFieldError('password')}
                     {...register('password')}
                 />
 

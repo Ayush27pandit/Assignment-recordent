@@ -10,9 +10,21 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE IF NOT EXISTS uploads (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL,
+    filename VARCHAR(255) NOT NULL,
+    original_name VARCHAR(255) NOT NULL,
+    file_type VARCHAR(10) NOT NULL,
+    row_count INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
 CREATE TABLE IF NOT EXISTS buyers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     user_id INT NOT NULL,
+    upload_id INT,
     name VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
     mobile VARCHAR(20) NOT NULL,
@@ -21,7 +33,8 @@ CREATE TABLE IF NOT EXISTS buyers (
     amount_paid DECIMAL(15, 2) NOT NULL,
     amount_due DECIMAL(15, 2) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (upload_id) REFERENCES uploads(id) ON DELETE SET NULL
 );
 
 CREATE TABLE IF NOT EXISTS refresh_tokens (
@@ -31,3 +44,8 @@ CREATE TABLE IF NOT EXISTS refresh_tokens (
     expires_at TIMESTAMP NOT NULL,
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
+
+-- Add upload_id column to existing buyers table if it doesn't exist
+-- Run this separately if you have existing data:
+-- ALTER TABLE buyers ADD COLUMN upload_id INT NULL;
+-- ALTER TABLE buyers ADD CONSTRAINT fk_buyers_upload FOREIGN KEY (upload_id) REFERENCES uploads(id) ON DELETE SET NULL;

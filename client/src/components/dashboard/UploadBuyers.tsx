@@ -1,9 +1,11 @@
 import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate, useParams } from 'react-router-dom';
 import api from '../../api/axios';
-import { Search, ChevronLeft, ChevronRight, Filter, X, DollarSign, TrendingUp } from 'lucide-react';
+import { Search, ChevronLeft, ChevronRight, Filter, X, DollarSign, TrendingUp, ArrowLeft, FileSpreadsheet, Users, Calendar, Trash2 } from 'lucide-react';
 import { Button } from '../ui/Button';
 import { Input } from '../ui/Input';
+import toast from 'react-hot-toast';
 
 interface Buyer {
     id: number;
@@ -15,6 +17,24 @@ interface Buyer {
     amount_paid: number;
     amount_due: number;
     created_at: string;
+}
+
+interface UploadDetail {
+    id: number;
+    filename: string;
+    original_name: string;
+    file_type: string;
+    row_count: number;
+    created_at: string;
+}
+
+interface UploadSummary {
+    total_buyers: number;
+    total_due: number;
+    total_paid: number;
+    total_invoice: number;
+    no_due_count: number;
+    has_due_count: number;
 }
 
 interface FetchResponse {
@@ -29,12 +49,15 @@ interface FetchResponse {
         dueStatus: string;
         minInvoice: number | null;
         maxInvoice: number | null;
+        uploadId: number | null;
     };
 }
 
 type DueStatus = 'all' | 'no_due' | 'has_due';
 
-export const BuyerTable: React.FC = () => {
+export const UploadBuyers: React.FC = () => {
+    const { uploadId } = useParams<{ uploadId: string }>();
+    const navigate = useNavigate();
     const [page, setPage] = useState(1);
     const [search, setSearch] = useState('');
     const [showFilters, setShowFilters] = useState(false);
@@ -52,10 +75,22 @@ export const BuyerTable: React.FC = () => {
     });
     const limit = 10;
 
-    const { data, isLoading, error } = useQuery<FetchResponse>({
-        queryKey: ['buyers', page, search, appliedFilters],
+    const { data: uploadData } = useQuery<{
+        upload: UploadDetail;
+        summary: UploadSummary;
+    }>({
+        queryKey: ['upload', uploadId],
         queryFn: async () => {
-            const params: Record<string, string | number> = { page, limit, search };
+            const response = await api.get(`/buyers/uploads/${uploadId}`);
+            return response.data;
+        },
+        enabled: !!uploadId,
+    });
+
+    const { data, isLoading, error, refetch } = useQuery<FetchResponse>({
+        queryKey: ['buyers', page, search, appliedFilters, uploadId],
+        queryFn: async () => {
+            const params: Record<string, string | number> = { page, limit, search, uploadId: uploadId! };
             if (appliedFilters.dueStatus !== 'all') {
                 params.dueStatus = appliedFilters.dueStatus;
             }
@@ -68,6 +103,7 @@ export const BuyerTable: React.FC = () => {
             const response = await api.get('/buyers', { params });
             return response.data;
         },
+        enabled: !!uploadId,
     });
 
     const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -97,6 +133,20 @@ export const BuyerTable: React.FC = () => {
         setPage(1);
     };
 
+    const handleDeleteUpload = async () => {
+        if (!uploadData || !window.confirm(`Are you sure you want to delete "${uploadData.upload.original_name}" and all its buyers?`)) {
+            return;
+        }
+
+        try {
+            await api.delete(`/buyers/uploads/${uploadId}`);
+            toast.success('Upload deleted successfully');
+            navigate('/dashboard/history');
+        } catch (error: unknown) {
+            toast.error('Failed to delete upload');
+        }
+    };
+
     const hasActiveFilters = 
         appliedFilters.dueStatus !== 'all' || 
         appliedFilters.minInvoice || 
@@ -110,10 +160,101 @@ export const BuyerTable: React.FC = () => {
         return count;
     };
 
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
     if (error) return <div className="text-red-500">Error loading data.</div>;
 
     return (
         <div className="space-y-6">
+            <div className="flex items-center space-x-4">
+                <Button variant="ghost" size="sm" onClick={() => navigate('/dashboard/history')}>
+                    <ArrowLeft size={18} className="mr-2" />
+                    Back to History
+                </Button>
+            </div>
+
+            {uploadData && (
+                <div className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+                    <div className="flex items-start justify-between">
+                        <div className="flex items-center space-x-4">
+                            <div className={`w-14 h-14 rounded-xl flex items-center justify-center ${
+                                uploadData.upload.file_type === 'CSV' 
+                                    ? 'bg-green-100 text-green-600' 
+                                    : 'bg-blue-100 text-blue-600'
+                            }`}>
+                                <FileSpreadsheet size={28} />
+                            </div>
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">{uploadData.upload.original_name}</h2>
+                                <div className="flex items-center space-x-4 mt-1 text-sm text-gray-500">
+                                    <span className="flex items-center">
+                                        <Calendar size={14} className="mr-1" />
+                                        {formatDate(uploadData.upload.created_at)}
+                                    </span>
+                                    <span className="flex items-center">
+                                        <Users size={14} className="mr-1" />
+                                        {uploadData.upload.row_count.toLocaleString()} buyers
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        <Button 
+                            variant="ghost" 
+                            size="sm"
+                            className="text-red-500 hover:text-red-600 hover:bg-red-50"
+                            onClick={handleDeleteUpload}
+                        >
+                            <Trash2 size={16} className="mr-2" />
+                            Delete
+                        </Button>
+                    </div>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                        <div className="bg-gray-50 rounded-xl p-4">
+                            <p className="text-sm text-gray-500">Total Invoice</p>
+                            <p className="text-xl font-bold text-gray-900">
+                                ${Number(uploadData.summary.total_invoice).toLocaleString()}
+                            </p>
+                        </div>
+                        <div className="bg-green-50 rounded-xl p-4">
+                            <p className="text-sm text-green-600">Total Paid</p>
+                            <p className="text-xl font-bold text-green-700">
+                                ${Number(uploadData.summary.total_paid).toLocaleString()}
+                            </p>
+                        </div>
+                        <div className="bg-red-50 rounded-xl p-4">
+                            <p className="text-sm text-red-600">Total Due</p>
+                            <p className="text-xl font-bold text-red-700">
+                                ${Number(uploadData.summary.total_due).toLocaleString()}
+                            </p>
+                        </div>
+                        <div className="bg-blue-50 rounded-xl p-4">
+                            <p className="text-sm text-blue-600">Buyers</p>
+                            <p className="text-xl font-bold text-blue-700">
+                                {uploadData.summary.total_buyers}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div className="flex items-center space-x-6 mt-4 text-sm">
+                        <span className="text-green-600 font-medium">
+                            {uploadData.summary.no_due_count} fully paid
+                        </span>
+                        <span className="text-red-600 font-medium">
+                            {uploadData.summary.has_due_count} with due
+                        </span>
+                    </div>
+                </div>
+            )}
+
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div className="relative w-full max-w-md">
                     <Input
@@ -375,7 +516,7 @@ export const BuyerTable: React.FC = () => {
                                             className={`w-8 h-8 rounded-lg text-sm font-bold transition-all ${page === p
                                                 ? 'bg-primary text-white shadow-md shadow-purple-500/20'
                                                 : 'hover:bg-gray-100 text-gray-400'
-                                                }`}
+                                            }`}
                                         >
                                             {p}
                                         </button>

@@ -26,12 +26,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const token = localStorage.getItem('accessToken');
             if (token) {
                 try {
-                    // Attempt to refresh token to see if session is still valid
                     await api.post('/auth/refresh');
-                    // Since our refresh endpoint doesn't return user info right now, 
-                    // we might need a /me endpoint in the future.
-                    // For now, let's assume if refresh works, token is fine.
-                    // To actually get user data, we'd need to fetch it or store it in localStorage.
                     const storedUser = localStorage.getItem('user');
                     if (storedUser) {
                         setUser(JSON.parse(storedUser));
