@@ -17,9 +17,13 @@ app.use(
     origin: (origin, callback) => {
       const allowedOrigins = [
         env.CLIENT_URL,
-        "https://assignment-recordent-angad7bcz-ayush-pandit-s-projects.vercel.app/",
+        "http://localhost:5173",
+        "http://localhost:5174",
       ];
-      if (!origin || allowedOrigins.includes(origin)) {
+      
+      const isVercelPreview = origin?.includes(".vercel.app");
+      
+      if (!origin || allowedOrigins.includes(origin) || isVercelPreview) {
         callback(null, true);
       } else {
         callback(new Error("Not allowed by CORS"));
