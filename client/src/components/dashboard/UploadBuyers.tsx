@@ -87,7 +87,7 @@ export const UploadBuyers: React.FC = () => {
         enabled: !!uploadId,
     });
 
-    const { data, isLoading, error, refetch } = useQuery<FetchResponse>({
+    const { data, isLoading, error } = useQuery<FetchResponse>({
         queryKey: ['buyers', page, search, appliedFilters, uploadId],
         queryFn: async () => {
             const params: Record<string, string | number> = { page, limit, search, uploadId: uploadId! };

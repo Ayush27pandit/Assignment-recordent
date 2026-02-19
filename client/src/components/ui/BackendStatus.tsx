@@ -21,7 +21,7 @@ export const useBackendStatus = () => {
         
         try {
             const startTime = Date.now();
-            const response = await api.get('/health', { timeout: 60000 });
+            await api.get('/health', { timeout: 60000 });
             const responseTime = Date.now() - startTime;
             
             setStatus({
@@ -36,7 +36,7 @@ export const useBackendStatus = () => {
             }
             
             return true;
-        } catch (error) {
+        } catch {
             setStatus({
                 isChecking: false,
                 isAwake: false,
@@ -54,7 +54,7 @@ export const useBackendStatus = () => {
 };
 
 export const BackendStatusIndicator: React.FC = () => {
-    const { isChecking, isAwake, error, checkBackend, showNotification } = useBackendStatus();
+    const { isChecking, isAwake, checkBackend, showNotification } = useBackendStatus();
 
     return (
         <>
