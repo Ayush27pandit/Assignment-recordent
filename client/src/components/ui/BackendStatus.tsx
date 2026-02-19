@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, createContext, useContext } from 'react';
 import api from '../../api/axios';
 import { Cloud, CloudOff, Loader2, CheckCircle } from 'lucide-react';
 
@@ -8,7 +8,14 @@ interface BackendStatus {
     error: string | null;
 }
 
-export const useBackendStatus = () => {
+interface BackendStatusContextType extends BackendStatus {
+    checkBackend: () => Promise<boolean>;
+    showNotification: boolean;
+}
+
+const BackendStatusContext = createContext<BackendStatusContextType | undefined>(undefined);
+
+export const BackendStatusProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [status, setStatus] = useState<BackendStatus>({
         isChecking: true,
         isAwake: false,
@@ -24,13 +31,15 @@ export const useBackendStatus = () => {
             await api.get('/health', { timeout: 60000 });
             const responseTime = Date.now() - startTime;
             
+            const wasWakingUp = !status.isAwake;
+            
             setStatus({
                 isChecking: false,
                 isAwake: true,
                 error: null
             });
             
-            if (responseTime > 5000) {
+            if (responseTime > 5000 || wasWakingUp) {
                 setShowNotification(true);
                 setTimeout(() => setShowNotification(false), 5000);
             }
@@ -50,7 +59,19 @@ export const useBackendStatus = () => {
         checkBackend();
     }, []);
 
-    return { ...status, checkBackend, showNotification };
+    return (
+        <BackendStatusContext.Provider value={{ ...status, checkBackend, showNotification }}>
+            {children}
+        </BackendStatusContext.Provider>
+    );
+};
+
+export const useBackendStatus = () => {
+    const context = useContext(BackendStatusContext);
+    if (context === undefined) {
+        throw new Error('useBackendStatus must be used within a BackendStatusProvider');
+    }
+    return context;
 };
 
 export const BackendStatusIndicator: React.FC = () => {

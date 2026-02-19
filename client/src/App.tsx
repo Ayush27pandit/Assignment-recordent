@@ -7,6 +7,7 @@ import {
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider, useAuth } from "./contexts/AuthContext";
+import { BackendStatusProvider } from "./components/ui/BackendStatus";
 
 import { Login } from "./pages/Login";
 import { Register } from "./pages/Register";
@@ -86,10 +87,12 @@ function App() {
     <QueryClientProvider client={queryClient}>
       <Router>
         <AuthProvider>
-          <div className="min-h-screen bg-white">
-            <AppRoutes />
-            <Toaster position="top-right" />
-          </div>
+          <BackendStatusProvider>
+            <div className="min-h-screen bg-white">
+              <AppRoutes />
+              <Toaster position="top-right" />
+            </div>
+          </BackendStatusProvider>
         </AuthProvider>
       </Router>
     </QueryClientProvider>

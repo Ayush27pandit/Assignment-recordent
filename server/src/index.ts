@@ -41,7 +41,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/buyers", generalLimiter, buyerRoutes);
 
-app.get("/health", (req: Request, res: Response) => {
+app.get("/api/v1/health", (req: Request, res: Response) => {
   res.json({ status: "ok", message: "Server is running" });
 });
 
